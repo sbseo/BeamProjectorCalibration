@@ -12,34 +12,32 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MahApps.Metro.Controls;
 
 namespace NewLocalBeam
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ConfigPage.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class ConfigPage : Page
     {
-
-        public MainWindow()
-        {   
+        public ConfigPage()
+        {
             InitializeComponent();
-            Model.mainPage = new MainPage();
-            myFrame.NavigationService.Navigate(Model.mainPage);
-
-
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
+            // 정보입력
+            Model.X = Convert.ToDouble(txt_X.Text);
+            Model.Y = Convert.ToDouble(txt_Y.Text);
+            Model.H = Convert.ToDouble(txt_H.Text);
+            Model.D = Convert.ToDouble(txt_D.Text);
+            Model.d = Convert.ToDouble(txt_d.Text);
+            Model.h = Convert.ToDouble(txt_h.Text);
 
+            // 페이지 이동
+            this.NavigationService.Navigate(Model.mainPage);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

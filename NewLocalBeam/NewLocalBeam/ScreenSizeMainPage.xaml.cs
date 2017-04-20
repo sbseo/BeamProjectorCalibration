@@ -12,34 +12,22 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MahApps.Metro.Controls;
 
 namespace NewLocalBeam
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ScreenSizeMainPage.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class ScreenSizeMainPage : Page
     {
-
-        public MainWindow()
-        {   
+        public ScreenSizeMainPage()
+        {
             InitializeComponent();
-            Model.mainPage = new MainPage();
-            myFrame.NavigationService.Navigate(Model.mainPage);
-
-
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
+            this.NavigationService.Navigate(Model.mainPage);
         }
     }
 }

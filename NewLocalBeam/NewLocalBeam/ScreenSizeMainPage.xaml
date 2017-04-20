@@ -1,0 +1,28 @@
+﻿<Page x:Class="NewLocalBeam.ScreenSizeMainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NewLocalBeam"
+      mc:Ignorable="d" 
+      Title="ScreenSizeMainPage">
+
+    <Grid HorizontalAlignment="Center">
+        <Button Content="돌아가기" HorizontalAlignment="Left" Margin="34,34,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Label Content="비율을 설정해주세요" HorizontalAlignment="Left" Margin="141,103,0,0" VerticalAlignment="Top"/>
+        <Label Content="가로비율" HorizontalAlignment="Left" Margin="141,175,0,0" VerticalAlignment="Top"/>
+        <Label Content="세로비율" HorizontalAlignment="Left" Margin="141,233,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtBox_x1" HorizontalAlignment="Left" Height="23" Margin="235,176,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="59"/>
+        <TextBox x:Name="txtBox_x2" HorizontalAlignment="Left" Height="23" Margin="303,177,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="59"/>
+        <TextBox x:Name="txtBox_x3" HorizontalAlignment="Left" Height="23" Margin="371,177,0,0" TextWrapping="Wrap" Text="{Binding ElementName=txtBox_x1, Path=Text, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="59" IsEnabled="False"/>
+        <TextBox x:Name="txtBox_y1" HorizontalAlignment="Left" Height="23" Margin="235,233,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="59"/>
+        <TextBox x:Name="txtBox_y2" HorizontalAlignment="Left" Height="23" Margin="303,233,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="59"/>
+        <TextBox x:Name="txtBox_y3" HorizontalAlignment="Left" Height="23" Margin="371,235,0,0" TextWrapping="Wrap" Text="{Binding ElementName=txtBox_y1, Path=Text, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="59" IsEnabled="False"/>
+        <Button x:Name="btn_next" Content="다음" HorizontalAlignment="Left" Margin="468,313,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Label Content=":" HorizontalAlignment="Left" Margin="360,233,0,0" VerticalAlignment="Top"/>
+        <Label Content=":" HorizontalAlignment="Left" Margin="292,233,0,0" VerticalAlignment="Top"/>
+        <Label Content=":" HorizontalAlignment="Left" Margin="361,176,0,0" VerticalAlignment="Top"/>
+        <Label Content=":" HorizontalAlignment="Left" Margin="293,175,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Page>
