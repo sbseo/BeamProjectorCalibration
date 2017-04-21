@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using NewLocalBeam.ModelFolder;
 
 namespace NewLocalBeam
 {
@@ -39,39 +40,39 @@ namespace NewLocalBeam
 
         double sensorLx, sensorRx; // 센서 위치그림. 센서 x좌표.
 
-        // XAML에 DataBinding하는데 사용함
-        public static DependencyProperty MyProperty2Property =
-DependencyProperty.Register("MyProperty2", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        // XAML에 DataBinding하는데 사용함
+//        public static DependencyProperty MyProperty2Property =
+//DependencyProperty.Register("MyProperty2", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty MyProperty1Property =
-            DependencyProperty.Register("MyProperty1", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty MyProperty1Property =
+//            DependencyProperty.Register("MyProperty1", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p1_xProperty =
-    DependencyProperty.Register("p1_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p1_xProperty =
+//    DependencyProperty.Register("p1_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p1_yProperty =
-DependencyProperty.Register("p1_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p1_yProperty =
+//DependencyProperty.Register("p1_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p2_xProperty =
-DependencyProperty.Register("p2_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p2_xProperty =
+//DependencyProperty.Register("p2_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p2_yProperty =
-DependencyProperty.Register("p2_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p2_yProperty =
+//DependencyProperty.Register("p2_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p3_xProperty =
-DependencyProperty.Register("p3_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p3_xProperty =
+//DependencyProperty.Register("p3_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p3_yProperty =
-DependencyProperty.Register("p3_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p3_yProperty =
+//DependencyProperty.Register("p3_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p1_stringProperty =
-DependencyProperty.Register("p1_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p1_stringProperty =
+//DependencyProperty.Register("p1_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p2_stringProperty =
-DependencyProperty.Register("p2_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p2_stringProperty =
+//DependencyProperty.Register("p2_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty p3_stringProperty =
-DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
+//        public static DependencyProperty p3_stringProperty =
+//DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
 
 
 
@@ -100,9 +101,29 @@ DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage
             DrawSensor();
             LocatePoints();
             MeasureAllAngles("left");
+       // DrawArc(sensorLPoint, 50, 90, 0);
             FindSensorPosition("left");
-            DrawInfo();
+         //   DrawArc(sensorLPoint, 50, 0, 45);
+          //  DrawArc(sensorLPoint, 30, 45, 60);
+
             
+
+
+            
+            /* 객체로 저장함 */
+            Points temp = new Points();
+            temp.P1_x = Model.p1_x;
+            temp.P2_x = Model.p2_x;
+            temp.P3_x = Model.p3_x;
+            temp.P1_y = Model.p1_y;
+            temp.P2_y = Model.p2_y;
+            temp.P3_y = Model.p3_y;
+ 
+            Model.points = temp;
+
+            DrawInfo();
+  
+
 
             //  MeasureAllAngles("right");
             //  FindSensorPosition("right");
@@ -118,111 +139,151 @@ DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage
 
             // 왼쪽센서 - p1 선 긋기
             Line myLine = new Line();
-            myLine.X1 = sensorLPoint.X; myLine.Y1 = sensorLPoint.Y;
-            myLine.X2 = Model.p1_x; myLine.Y2 = Model.p1_y;
+            myLine.X1 = sensorLPoint.X + sensorBorder/2; myLine.Y1 = sensorLPoint.Y + sensorBorder/2;
+            myLine.X2 = Model.p1_x + sensorBorder/2 ; myLine.Y2 = Model.p1_y + sensorBorder/2;
             myLine.Stroke = new SolidColorBrush(Colors.Black);
             canvas.Children.Add(myLine);
 
             // 왼쪽센서 - p2 선 긋기
             myLine = new Line();
-            myLine.X1 = sensorLPoint.X; myLine.Y1 = sensorLPoint.Y;
-            myLine.X2 = Model.p2_x; myLine.Y2 = Model.p2_y;
+            myLine.X1 = sensorLPoint.X + sensorBorder / 2; myLine.Y1 = sensorLPoint.Y + sensorBorder / 2;
+            myLine.X2 = Model.p2_x + sensorBorder / 2; myLine.Y2 = Model.p2_y + sensorBorder / 2;
             myLine.Stroke = new SolidColorBrush(Colors.Black);
             canvas.Children.Add(myLine);
 
             // 왼쪽센서 - p3 선 긋기
             myLine = new Line();
-            myLine.X1 = sensorLPoint.X; myLine.Y1 = sensorLPoint.Y;
-            myLine.X2 = Model.p3_x; myLine.Y2 = Model.p3_y;
+            myLine.X1 = sensorLPoint.X + sensorBorder / 2; myLine.Y1 = sensorLPoint.Y + sensorBorder / 2;
+            myLine.X2 = Model.p3_x + sensorBorder / 2; myLine.Y2 = Model.p3_y + sensorBorder / 2;
             myLine.Stroke = new SolidColorBrush(Colors.Black);
             canvas.Children.Add(myLine);
 
 
             // 좌표 위치 표시하기
+            Label lblP1 = new Label();
+            Canvas.SetLeft(lblP1, Model.p1_x);
+            Canvas.SetTop(lblP1, Model.p1_y + 5);
+            lblP1.Content = "(" + Model.p1_x + ", " + Model.p1_y + ")";
+            canvas.Children.Add(lblP1);
+
+            Label lblP2 = new Label();
+            Canvas.SetLeft(lblP2, Model.p2_x);
+            Canvas.SetTop(lblP2, Model.p2_y + 5);
+            lblP2.Content = "(" + Model.p2_x + ", " + Model.p2_y + ")";
+            canvas.Children.Add(lblP2);
+
+            Label lblP3 = new Label();
+            Canvas.SetLeft(lblP3, Model.p3_x);
+            Canvas.SetTop(lblP3, Model.p3_y + 5);
+            lblP3.Content = "(" + Model.p3_x + ", " + Model.p3_y + ")";
+            canvas.Children.Add(lblP3);
+
+            Label lblSensorLeft = new Label();
+            Canvas.SetLeft(lblSensorLeft, sensorLPoint.X + 20);
+            Canvas.SetTop(lblSensorLeft, sensorLPoint.Y);
+            lblSensorLeft.Content = "(" + sensorLPoint.X+ ", " + sensorLPoint.Y + ")";
+            lblSensorLeft.Foreground = new SolidColorBrush(Colors.DarkRed);
+            canvas.Children.Add(lblSensorLeft);
+
+            // 각도 표시하기
+            Label lblThetaR = new Label();
+            Canvas.SetLeft(lblThetaR, (sensorLPoint.X + Model.p1_x) * 2 / 3);
+            Canvas.SetTop(lblThetaR, sensorLPoint.Y + 10);
+            lblThetaR.Content = Math.Round(RadianToDegree(leftDevice_thetaR), 3) + "°";
+            lblThetaR.Foreground = new SolidColorBrush(Colors.DarkRed);
+            canvas.Children.Add(lblThetaR);
+
+
+            Label lblThetaL = new Label();
+            Canvas.SetLeft(lblThetaL, (sensorLPoint.X + Model.p3_x) * 1 / 2);
+            Canvas.SetTop(lblThetaL, sensorLPoint.Y + 10);
+            lblThetaL.Content = Math.Round(RadianToDegree(leftDevice_thetaL), 3) + "°";
+            lblThetaL.Foreground = new SolidColorBrush(Colors.DarkRed);
+            canvas.Children.Add(lblThetaL);
+
 
             // Set MyProperty1 and 2
-            this.MyProperty1 = "Hello Hello Hello";
-            this.MyProperty2 = "World";
+            //this.MyProperty1 = "Hello Hello Hello";
+            //this.MyProperty2 = "World";
 
-            this.p1_x = Convert.ToString(Model.p1_x);
-            this.p2_x = Convert.ToString(Model.p2_x);
-            this.p3_x = Convert.ToString(Model.p3_x);
-            this.p1_y = Convert.ToString(Model.p1_y + 5);
-            this.p2_y = Convert.ToString(Model.p2_y + 5);
-            this.p3_y = Convert.ToString(Model.p3_y + 5);
-            this.p1_string = "(" + Model.p1_x + " " + Model.p1_y + ")";
-            this.p2_string = "(" + Model.p2_x + " " + Model.p2_y + ")";
-            this.p3_string = "(" + Model.p3_x + " " + Model.p3_y + ")";
+            //this.p1_x = Convert.ToString(Model.p1_x);
+            //this.p2_x = Convert.ToString(Model.p2_x);
+            //this.p3_x = Convert.ToString(Model.p3_x);
+            //this.p1_y = Convert.ToString(Model.p1_y + 5);
+            //this.p2_y = Convert.ToString(Model.p2_y + 5);
+            //this.p3_y = Convert.ToString(Model.p3_y + 5);
+            //this.p1_string = "(" + Model.p1_x + " " + Model.p1_y + ")";
+            //this.p2_string = "(" + Model.p2_x + " " + Model.p2_y + ")";
+            //this.p3_string = "(" + Model.p3_x + " " + Model.p3_y + ")";
 
-            
         }
 
 
-        public string MyProperty1
-        {
-            get { return (string)GetValue(MyProperty1Property); }
-            set { SetCurrentValue(MyProperty1Property, value); }
-        }
+        //public string MyProperty1
+        //{
+        //    get { return (string)GetValue(MyProperty1Property); }
+        //    set { SetCurrentValue(MyProperty1Property, value); }
+        //}
 
-        public string MyProperty2
-        {
-            get { return (string)GetValue(MyProperty2Property); }
-            set { SetCurrentValue(MyProperty2Property, value); }
-        }
+        //public string MyProperty2
+        //{
+        //    get { return (string)GetValue(MyProperty2Property); }
+        //    set { SetCurrentValue(MyProperty2Property, value); }
+        //}
 
-        public string p1_x
-        {
-            get { return (string)GetValue(p1_xProperty); }
-            set { SetCurrentValue(p1_xProperty, value); }
-        }
+        //public string p1_x
+        //{
+        //    get { return (string)GetValue(p1_xProperty); }
+        //    set { SetCurrentValue(p1_xProperty, value); }
+        //}
 
-        public string p1_y
-        {
-            get { return (string)GetValue(p1_yProperty); }
-            set { SetCurrentValue(p1_yProperty, value); }
-        }
+        //public string p1_y
+        //{
+        //    get { return (string)GetValue(p1_yProperty); }
+        //    set { SetCurrentValue(p1_yProperty, value); }
+        //}
 
-        public string p2_x
-        {
-            get { return (string)GetValue(p2_xProperty); }
-            set { SetCurrentValue(p2_xProperty, value); }
-        }
+        //public string p2_x
+        //{
+        //    get { return (string)GetValue(p2_xProperty); }
+        //    set { SetCurrentValue(p2_xProperty, value); }
+        //}
 
-        public string p2_y
-        {
-            get { return (string)GetValue(p2_yProperty); }
-            set { SetCurrentValue(p2_yProperty, value); }
-        }
+        //public string p2_y
+        //{
+        //    get { return (string)GetValue(p2_yProperty); }
+        //    set { SetCurrentValue(p2_yProperty, value); }
+        //}
 
-        public string p3_x
-        {
-            get { return (string)GetValue(p3_xProperty); }
-            set { SetCurrentValue(p3_xProperty, value); }
-        }
+        //public string p3_x
+        //{
+        //    get { return (string)GetValue(p3_xProperty); }
+        //    set { SetCurrentValue(p3_xProperty, value); }
+        //}
 
-        public string p3_y
-        {
-            get { return (string)GetValue(p3_yProperty); }
-            set { SetCurrentValue(p3_yProperty, value); }
-        }
+        //public string p3_y
+        //{
+        //    get { return (string)GetValue(p3_yProperty); }
+        //    set { SetCurrentValue(p3_yProperty, value); }
+        //}
 
-        public string p1_string
-        {
-            get { return (string)GetValue(p1_stringProperty); }
-            set { SetCurrentValue(p1_stringProperty, value); }
-        }
+        //public string p1_string
+        //{
+        //    get { return (string)GetValue(p1_stringProperty); }
+        //    set { SetCurrentValue(p1_stringProperty, value); }
+        //}
 
-        public string p2_string
-        {
-            get { return (string)GetValue(p2_stringProperty); }
-            set { SetCurrentValue(p2_stringProperty, value); }
-        }
+        //public string p2_string
+        //{
+        //    get { return (string)GetValue(p2_stringProperty); }
+        //    set { SetCurrentValue(p2_stringProperty, value); }
+        //}
 
-        public string p3_string
-        {
-            get { return (string)GetValue(p3_stringProperty); }
-            set { SetCurrentValue(p3_stringProperty, value); }
-        }
+        //public string p3_string
+        //{
+        //    get { return (string)GetValue(p3_stringProperty); }
+        //    set { SetCurrentValue(p3_stringProperty, value); }
+        //}
 
 
         /* 변수 초기화. 센서환경설정을 그림그리기 적합하게 설정함 */
@@ -255,6 +316,41 @@ DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage
 
             return radian;
         }
+
+        public void DrawArc(Point center, double radius, double start_angle, double end_angle)
+        {
+            Path arc_path = new Path();
+            arc_path.Stroke = Brushes.DarkRed;
+            arc_path.StrokeThickness = 3;
+            Canvas.SetLeft(arc_path, 0);
+            Canvas.SetTop(arc_path, 0);
+
+            start_angle = ((start_angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+            end_angle = ((end_angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+            if (end_angle < start_angle)
+            {
+                double temp_angle = end_angle;
+                end_angle = start_angle;
+                start_angle = temp_angle;
+            }
+            double angle_diff = end_angle - start_angle;
+            PathGeometry pathGeometry = new PathGeometry();
+            PathFigure pathFigure = new PathFigure();
+            ArcSegment arcSegment = new ArcSegment();
+            arcSegment.IsLargeArc = angle_diff >= Math.PI;
+            //Set start of arc
+            pathFigure.StartPoint = new Point(center.X + radius * Math.Cos(start_angle), center.Y + radius * Math.Sin(start_angle));
+            //set end point of arc.
+            arcSegment.Point = new Point(center.X + radius * Math.Cos(end_angle), center.Y + radius * Math.Sin(end_angle));
+            arcSegment.Size = new Size(radius, radius);
+            arcSegment.SweepDirection = SweepDirection.Clockwise;
+
+            pathFigure.Segments.Add(arcSegment);
+            pathGeometry.Figures.Add(pathFigure);
+            arc_path.Data = pathGeometry;
+            canvas.Children.Add(arc_path);
+        }
+
 
         /* p1, p2, p3좌표 각도 구하기 */
         public double leftDevice_thetaR1;
@@ -332,14 +428,20 @@ DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage
                 double a = p[1].X - p[0].X; double b = p[2].X - p[1].X;
 
                 // 공식대입
-                rightDevice_TanThetaM = (a * Math.Tan(rightDevice_thetaL) - b * Math.Tan(rightDevice_thetaR)) / ((a + b) * Math.Tan(rightDevice_thetaR) * Math.Tan(rightDevice_thetaL)); // 여기서 음수가 나옴..... 왜 그러지...
-                                                                                                                                                                                         //  rightDevice_thetaM = Math.Abs(rightDevice_thetaM);
-                rightDevice_thetaM = Math.Atan(rightDevice_TanThetaM);
+                rightDevice_thetaM = Math.Atan2((a * Math.Tan(rightDevice_thetaL) - b * Math.Tan(rightDevice_thetaR)), ((a + b) * Math.Tan(rightDevice_thetaR) * Math.Tan(rightDevice_thetaL)));
+
                 double y = a / (Math.Tan(rightDevice_thetaR + rightDevice_thetaM) - Math.Tan(rightDevice_thetaM));
                 double x = y * Math.Tan(rightDevice_thetaM);
 
                 // x이용해서 센서의 x좌표 찾기. p2위치와 센서 위치에 따라 양수 음수 구별.
                 // x = (p[1].X > x) ? p[1].X + x : p[1].X - x;   
+
+                for (int i = -90; i <= 90; i += 10)
+                {
+                    double rad = DegreeToRadian(i);
+                    Console.WriteLine(Math.Tan(rad));
+                }
+
 
                 // 답 출력
                 txt_RDthetaM.Text = Convert.ToString(RadianToDegree(rightDevice_thetaM));
@@ -358,14 +460,11 @@ DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage
                 double a = p[1].X - p[0].X; double b = p[2].X - p[1].X;
 
                 // 공식대입
-                leftDevice_thetaM = DegreeToRadian(6.611);
-                //  leftDevice_thetaM = (a * Math.Tan(leftDevice_thetaL) - b * Math.Tan(leftDevice_thetaR)) / ((a + b) * Math.Tan(leftDevice_thetaR) * Math.Tan(leftDevice_thetaL));
+                leftDevice_thetaM = Math.Atan2((a * Math.Tan(leftDevice_thetaL) - b * Math.Tan(leftDevice_thetaR)), ((a + b) * Math.Tan(leftDevice_thetaR) * Math.Tan(leftDevice_thetaL)));
 
                 double y = a / (Math.Tan(leftDevice_thetaR + leftDevice_thetaM) - Math.Tan(leftDevice_thetaM));
                 double x = y * Math.Tan(leftDevice_thetaM);
 
-                // x이용해서 센서의 x좌표 찾기. p2위치와 센서 위치에 따라 양수 음수 구별.
-                // x = (p[1].X > x) ? p[1].X + x : p[1].X - x;   
 
                 // 답 출력
                 txt_LDthetaM.Text = Convert.ToString(RadianToDegree(leftDevice_thetaM));
@@ -432,14 +531,16 @@ DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage
             canvas.Children.Add(screen);
         }
 
+        public static int sensorBorder = 10;
+
         /* 센서 그림 */
         public void DrawSensor()
         {
 
             // 왼쪽센서
             Ellipse sensorL = new Ellipse();
-            sensorL.Width = 10;
-            sensorL.Height = 10;
+            sensorL.Width = sensorBorder;
+            sensorL.Height = sensorBorder;
 
             Canvas.SetLeft(sensorL, sensorLx);
             Canvas.SetTop(sensorL, 0);
@@ -449,8 +550,8 @@ DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage
 
             // 오른쪽센서
             Ellipse sensorR = new Ellipse();
-            sensorR.Width = 10;
-            sensorR.Height = 10;
+            sensorR.Width = sensorBorder;
+            sensorR.Height = sensorBorder;
             Canvas.SetLeft(sensorR, sensorRx);
             Canvas.SetTop(sensorR, 0);
             sensorR.Fill = Brushes.DarkRed;

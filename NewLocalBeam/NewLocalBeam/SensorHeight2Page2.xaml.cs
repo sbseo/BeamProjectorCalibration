@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Controls;
+using NewLocalBeam.ModelFolder;
 
 namespace NewLocalBeam
 {

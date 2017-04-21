@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NewLocalBeam
+namespace NewLocalBeam.ModelFolder
 {
     class Model
     {
@@ -24,6 +24,7 @@ namespace NewLocalBeam
         public static ScreenSizeMainPage screenSizeMainPage;
         public static SensorHeightPage2 sensorHeightPage2;
 
+        public static Points points;
 
         /* 센서 환경설정 */
         //길이
@@ -40,7 +41,7 @@ namespace NewLocalBeam
         public static double RATIO_FULLHEIGHT;
         public static double RATIO_HEIGHT;
 
-        /* 수평 맞추기 */
+        // 정보 임시 저장
         public static double p1_x;
         public static double p2_x;
         public static double p3_x;
