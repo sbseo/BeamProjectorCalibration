@@ -56,8 +56,8 @@ namespace NewLocalBeam
             MeasureAllAngles("left");
             FindSensorPosition2("left");
 
-         //   MeasureAllAngles("right");
-         //   FindSensorPosition("right");
+            MeasureAllAngles("right");
+            FindSensorPosition2("right");
         }
 
         /* 변수 초기화. 센서환경설정을 그림그리기 적합하게 설정함 */
@@ -156,27 +156,41 @@ namespace NewLocalBeam
         public async void FindSensorPosition2(string direction)
         {
 
+            Boolean isRightSided = false;
+
             if (direction == "right")
             {
                 //계산시작(기본단위는 Radian으로 합시다)
-                rightDevice_thetaR = rightDevice_thetaR2 - rightDevice_thetaR1;
-                rightDevice_thetaL = rightDevice_thetaR3 - rightDevice_thetaR2;
+                rightDevice_thetaR = Math.Abs(rightDevice_thetaR2 - rightDevice_thetaR1);
+                rightDevice_thetaL = Math.Abs(rightDevice_thetaR3 - rightDevice_thetaR2);
+
+                if (p[1].X < p[2].X)
+                {
+                }
+                /*               p1 [p0]
+                    p3 [p2]      p2 [p1]
+                꼴일경우... */
+                else
+                {
+                    isRightSided = true;
+                }
+
 
                 // a, b 변수 설정
-                double a = p[1].X - p[0].X; double b = p[2].X - p[1].X;
+                double a = Math.Abs(p[1].Y - p[0].Y);
+                double b = Math.Abs(p[2].X - p[1].X);
+                double thetaA = rightDevice_thetaR + rightDevice_thetaL;
 
                 // 공식대입
-                rightDevice_thetaM = (a * Math.Tan(rightDevice_thetaL) - b * Math.Tan(rightDevice_thetaR)) / ((a + b) * Math.Tan(rightDevice_thetaR) * Math.Tan(rightDevice_thetaL)); // 여기서 음수가 나옴..... 왜 그러지...
-                                                                                                                                                                                      //  rightDevice_thetaM = Math.Abs(rightDevice_thetaM);
-                double y = a / (Math.Tan(rightDevice_thetaR + rightDevice_thetaM) - Math.Tan(rightDevice_thetaM));
+                rightDevice_thetaM = Math.Atan2((b * Math.Tan(thetaA) - (a * Math.Tan(thetaA) * Math.Tan(rightDevice_thetaL)) - (b * Math.Tan(rightDevice_thetaL))), a * Math.Tan(rightDevice_thetaL));
+
+                double y = ((a * Math.Tan(thetaA)) + (a * Math.Tan(rightDevice_thetaM)) - (Math.Tan(thetaA) * Math.Tan(rightDevice_thetaM) * b) + b) / (Math.Tan(thetaA) * (1 + Math.Tan(rightDevice_thetaM) * Math.Tan(rightDevice_thetaM)));
                 double x = y * Math.Tan(rightDevice_thetaM);
 
-                // x이용해서 센서의 x좌표 찾기. p2위치와 센서 위치에 따라 양수 음수 구별.
-                // x = (p[1].X > x) ? p[1].X + x : p[1].X - x;   
 
                 // 답 출력
                 txt_RDthetaM.Text = Convert.ToString(RadianToDegree(rightDevice_thetaM));
-                txt_RDx.Text = Convert.ToString(x); // x값 출력
+                txt_RDx.Text = (isRightSided == true) ? Convert.ToString(p[2].X - x) : Convert.ToString(p[2].X + x); // x값 출력
                 txt_RDy.Text = Convert.ToString(y);
 
             }
@@ -184,27 +198,53 @@ namespace NewLocalBeam
             {
 
                 //계산시작(기본단위는 Radian으로 합시다)
-                leftDevice_thetaR = leftDevice_thetaR2 - leftDevice_thetaR1;
-                leftDevice_thetaL = leftDevice_thetaR3 - leftDevice_thetaR2;
+                leftDevice_thetaR = Math.Abs(leftDevice_thetaR2 - leftDevice_thetaR1);
+                leftDevice_thetaL = Math.Abs(leftDevice_thetaR3 - leftDevice_thetaR2);
+
+                /* p1 [p0]
+                   p2 [p1]     p3 [p2]
+                꼴일경우... */
+                if (p[1].X < p[2].X)
+                {
+                //    leftDevice_thetaR = Math.Abs(leftDevice_thetaR2 - leftDevice_thetaR1);
+                //    leftDevice_thetaL = Math.Abs(leftDevice_thetaR3 - leftDevice_thetaR2);
+                }
+                /*               p1 [p0]
+                    p3 [p2]      p2 [p1]
+                꼴일경우... */
+                else
+                {
+                    isRightSided = true;
+                   // leftDevice_thetaR = Math.Abs(leftDevice_thetaR1 - leftDevice_thetaR2);
+                  //  leftDevice_thetaL = Math.Abs(leftDevice_thetaR2 - leftDevice_thetaR3);
+                }
 
                 // a, b 변수 설정
-                double a = Math.Abs(p[1].Y - p[0].Y); double b = Math.Abs(p[2].X - p[1].X);
-                double A = Math.Tan(leftDevice_thetaR + leftDevice_thetaL);
-                double L = Math.Tan(leftDevice_thetaL); // Tan(thetaL)
-                double M; // Tan(thetaM)
+                double a = Math.Abs(p[1].Y - p[0].Y);
+                double b = Math.Abs(p[2].X - p[1].X);
+                double thetaA = leftDevice_thetaR + leftDevice_thetaL;
 
                 // 공식대입
-                M = ((b * A) - (a * A * L) - L) / ((2 * b * A * L) + (a * L));
                 // double y = (a * A + a * M + b + b * A * M) / (A * (1 + M * M));
-                double y = (b * (1 - L * M)) / (L * (1 + M * M));
-                double x = y * M;
+                //leftDevice_thetaM = Math.Atan2((b * Math.Tan(thetaA)) - (a * Math.Tan(thetaA) * Math.Tan(leftDevice_thetaL)) - Math.Tan(leftDevice_thetaL), (2 * b * Math.Tan(thetaA) * Math.Tan(leftDevice_thetaL)) + (a * Math.Tan(leftDevice_thetaL)));
+                //double y = b / ( Math.Tan(leftDevice_thetaL + leftDevice_thetaM) * Math.Tan(leftDevice_thetaM));
+                //double x = y * Math.Tan(leftDevice_thetaM);
 
-                leftDevice_thetaM = Math.Atan2(x, y);
+                //공식대입 4월 23일버전
+                leftDevice_thetaM = Math.Atan2((b * Math.Tan(thetaA) - (a * Math.Tan(thetaA) * Math.Tan(leftDevice_thetaL)) - (b * Math.Tan(leftDevice_thetaL))), a * Math.Tan(leftDevice_thetaL));
+                double y = ((a * Math.Tan(thetaA)) + (a * Math.Tan(leftDevice_thetaM)) - (Math.Tan(thetaA) * Math.Tan(leftDevice_thetaM) * b) + b) / (Math.Tan(thetaA) * (1 + Math.Tan(leftDevice_thetaM) * Math.Tan(leftDevice_thetaM)));
+               // double y = (b * (1 - (Math.Tan(leftDevice_thetaL) * Math.Tan(leftDevice_thetaM)))) / (Math.Tan(leftDevice_thetaL) * (1 + Math.Tan(leftDevice_thetaM) * Math.Tan(leftDevice_thetaM)));
+                double x = Math.Tan(leftDevice_thetaM) * y;
+
+           
+               // Console.WriteLine("1번식: {0}, 2번식: {1}", y, y2);
+
 
                 // 답 출력
                 txt_LDthetaM.Text = Convert.ToString(RadianToDegree(leftDevice_thetaM));
-                txt_LDx.Text = Convert.ToString(p[2].X + x); // x값 출력
+                txt_LDx.Text = (isRightSided == true) ? Convert.ToString(p[2].X - x) : Convert.ToString(p[2].X + x); // x값 출력
                 txt_LDy.Text = Convert.ToString(y);
+
 
                 // leftDevice_thetaL + leftDevice_thetaM > 0 && leftDevice_thetaL + leftDevice_thetaM < Math.PI / 2
                 if (leftDevice_thetaR2 + leftDevice_thetaL + leftDevice_thetaM > Math.PI / 2 - 0.1 && leftDevice_thetaR2 + leftDevice_thetaL + leftDevice_thetaM < Math.PI / 2 + 0.1)

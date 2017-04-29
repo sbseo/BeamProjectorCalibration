@@ -24,6 +24,8 @@ namespace NewLocalBeam.ModelFolder
         public static ScreenSizeMainPage screenSizeMainPage;
         public static SensorHeightPage2 sensorHeightPage2;
 
+        public static SensorHeightPageType3 sensorHeightPageType3;
+
         public static Points points;
 
         /* 센서 환경설정 */

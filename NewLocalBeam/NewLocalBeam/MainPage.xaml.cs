@@ -31,7 +31,7 @@ namespace NewLocalBeam
             Model.screenSizeMainPage = new ScreenSizeMainPage();
             Model.sensorHeightPage2 = new SensorHeightPage2();
             Model.sensorHeight2Page2 = new SensorHeight2Page2();
-
+            Model.sensorHeightPageType3 = new SensorHeightPageType3();
         }
 
         private void Main_Click(object sender, RoutedEventArgs e)
@@ -53,6 +53,11 @@ namespace NewLocalBeam
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(Model.sensorHeight2MainPage);
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(Model.sensorHeightPageType3);
         }
     }
 }

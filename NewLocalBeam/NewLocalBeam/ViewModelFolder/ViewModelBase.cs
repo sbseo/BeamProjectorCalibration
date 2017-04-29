@@ -44,27 +44,6 @@ namespace NewLocalBeam.ViewModelFolder
         }
 
 
-        public string txtP1String
-        {
-            get { return pt.P1_string; }
-            set { pt.P1_string= value; }
-        }
-
-
-        public string txtP2String
-        {
-            get { return pt.P2_string; }
-            set { pt.P2_string = value; }
-        }
-
-
-        public string txtP3String
-        {
-            get { return pt.P3_string; }
-            set { pt.P3_string = value; }
-        }
-
-
         public void RunMethod()
         {
             Console.WriteLine("RunMethod");

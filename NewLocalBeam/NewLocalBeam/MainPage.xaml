@@ -14,6 +14,7 @@
         <Button Content="센서 환경설정" HorizontalAlignment="Center" Margin="375,49,29.8,0" VerticalAlignment="Top" Width="132" Height="50" Click="Button_Click" />
         <Button Content="수평 맞추기2" HorizontalAlignment="Center" Margin="193,231,211.8,0" Width="132" Height="61" VerticalAlignment="Top" Click="Button_Click_2"/>
         <Image HorizontalAlignment="Center" Height="53" VerticalAlignment="Top" Width="55" Margin="311,49,170.8,0" Source="settings (1).png"/>
+        <Button Content="수평 맞추기3" HorizontalAlignment="Center" Margin="193,317,211.8,0" Width="132" Height="61" VerticalAlignment="Top" Click="Button_Click_3" />
 
 
     </Grid>
