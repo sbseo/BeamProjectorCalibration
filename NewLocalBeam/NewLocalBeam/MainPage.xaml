@@ -4,19 +4,39 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NewLocalBeam"
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d" 
       Title="MainPage" d:DesignHeight="238.4" >
 
-    <Grid Margin="0,36,0,-175.6">
-        <Button Content="화면 크기 구하기" HorizontalAlignment="Center" Margin="6,147,398.8,0" Click="Button_Click_1" Width="132" Height="61" VerticalAlignment="Top"/>
-        <Button Content="수평 맞추기1" HorizontalAlignment="Center" Margin="193,147,211.8,0" Click="Main_Click" Width="132" Height="61" VerticalAlignment="Top"/>
-        <Button Content="해상도 구하기" HorizontalAlignment="Center" Margin="375,147,29.8,0" VerticalAlignment="Top" Width="132" Height="61"/>
-        <Button Content="센서 환경설정" HorizontalAlignment="Center" Margin="375,49,29.8,0" VerticalAlignment="Top" Width="132" Height="50" Click="Button_Click" />
-        <Button Content="수평 맞추기2" HorizontalAlignment="Center" Margin="193,231,211.8,0" Width="132" Height="61" VerticalAlignment="Top" Click="Button_Click_2"/>
-        <Image HorizontalAlignment="Center" Height="53" VerticalAlignment="Top" Width="55" Margin="311,49,170.8,0" Source="settings (1).png"/>
-        <Button Content="수평 맞추기3" HorizontalAlignment="Center" Margin="193,317,211.8,0" Width="132" Height="61" VerticalAlignment="Top" Click="Button_Click_3" />
 
+    <Grid Margin="0,36,0,-175.6" HorizontalAlignment="Center">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Controls:Tile Title="Configuration" TiltFactor="2" Grid.Column="1" Grid.Row="0" Width="200" Height="100" Background="Green"  Click="Button_Click" >
+                    <iconPacks:PackIconMaterial Kind="Settings" Width="30" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Controls:Tile>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Controls:Tile Title="Verify Type A" TiltFactor="2" Grid.Column="1" Grid.Row="0" Width="200" Height="100" Background="Teal" Click="Main_Click">
+                    <iconPacks:PackIconMaterial Kind="EmoticonCool" Width="30" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Controls:Tile>
+                <Controls:Tile Title="Verify Type B" TiltFactor="2" Grid.Column="1" Grid.Row="0" Width="200" Height="100" Background="#D2691E" Click="Button_Click_2">
+                    <iconPacks:PackIconMaterial Kind="EmoticonCool" Width="30" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center"  />
+                </Controls:Tile>
+                <Controls:Tile Title="Verify Type C" TiltFactor="2" Grid.Column="1" Grid.Row="0" Width="200" Height="100" Background="#1E90FF" Click="Button_Click_3" >
+                    <iconPacks:PackIconMaterial Kind="EmoticonCool" Width="30" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Controls:Tile>
+
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" >
+                <Controls:Tile Title="Run Program" TiltFactor="2" Grid.Column="1" Grid.Row="0" Width="614" Height="100" Click="Button_Click_4" >
+                    <iconPacks:PackIconMaterial Kind="EmoticonCool" Width="30" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Controls:Tile>
+            </StackPanel>
+        </StackPanel>
 
     </Grid>
-    
+
 </Page>

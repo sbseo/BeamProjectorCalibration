@@ -32,11 +32,14 @@ namespace NewLocalBeam
             Model.sensorHeightPage2 = new SensorHeightPage2();
             Model.sensorHeight2Page2 = new SensorHeight2Page2();
             Model.sensorHeightPageType3 = new SensorHeightPageType3();
+
+
+            Model.entireCalibrationPage = new EntireCalibrationPage();
         }
 
         private void Main_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(Model.sensorHeightMainPage);
+            this.NavigationService.Navigate(Model.sensorHeightPage2);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -52,12 +55,17 @@ namespace NewLocalBeam
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(Model.sensorHeight2MainPage);
+            this.NavigationService.Navigate(Model.sensorHeight2Page2);
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(Model.sensorHeightPageType3);
+        }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(Model.entireCalibrationPage);
         }
     }
 }

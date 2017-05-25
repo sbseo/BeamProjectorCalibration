@@ -25,6 +25,7 @@ namespace NewLocalBeam.ModelFolder
         public static SensorHeightPage2 sensorHeightPage2;
 
         public static SensorHeightPageType3 sensorHeightPageType3;
+        public static EntireCalibrationPage entireCalibrationPage;
 
         public static Points points;
 

@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using NewLocalBeam.ModelFolder;
 using System.Windows.Controls.Primitives;
+using System.Collections.ObjectModel;
 
 namespace NewLocalBeam
 {
@@ -35,60 +36,87 @@ namespace NewLocalBeam
         public static double screenHeight;
         public static double deviceLength;
         public static double deviceHeight;
-
+        Points points;
         Point sensorLPoint;
         Point sensorRPoint;
 
         double sensorLx, sensorRx; // 센서 위치그림. 센서 x좌표.
 
-//        // XAML에 DataBinding하는데 사용함
-//        public static DependencyProperty MyProperty2Property =
-//DependencyProperty.Register("MyProperty2", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty MyProperty1Property =
-//            DependencyProperty.Register("MyProperty1", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p1_xProperty =
-//    DependencyProperty.Register("p1_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p1_yProperty =
-//DependencyProperty.Register("p1_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p2_xProperty =
-//DependencyProperty.Register("p2_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p2_yProperty =
-//DependencyProperty.Register("p2_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p3_xProperty =
-//DependencyProperty.Register("p3_x", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p3_yProperty =
-//DependencyProperty.Register("p3_y", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p1_stringProperty =
-//DependencyProperty.Register("p1_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p2_stringProperty =
-//DependencyProperty.Register("p2_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-//        public static DependencyProperty p3_stringProperty =
-//DependencyProperty.Register("p3_string", typeof(string), typeof(SensorHeightPage2), new UIPropertyMetadata(string.Empty));
-
-
-
         public SensorHeightPage2()
         {
             InitializeComponent();
+            InitializeValue();
+            MakePointsBinding();
 
             // 이벤트 추가
-            Model.sensorHeightMainPage.ModelUpdateHappened += ModelUpdateHandler; // 앞에서 이벤트 발생하면 이거 실행
+            //Model.sensorHeightMainPage.ModelUpdateHappened += ModelUpdateHandler; // 앞에서 이벤트 발생하면 이거 실행
             this.KeepAlive = true;
 
         }
 
+        #region   For INPC Implemenation
+        /* INotifyPropertyChanged 이걸로 적용함.
+        https://www.codeproject.com/Articles/41817/Implementing-INotifyPropertyChanged */
+
+        private ObservableCollection<Points> PointList
+        {
+            get
+            {
+                return (ObservableCollection<Points>)
+               GetValue(PointListProperty);
+            }
+            set { SetValue(PointListProperty, value); }
+        }
+
+        // Point를 저장하는 Depedency Proeprty. 이거를 통해서 View와 정보를 주고받음. 
+        public static readonly DependencyProperty PointListProperty =
+DependencyProperty.Register("PointList",
+typeof(ObservableCollection<Points>), typeof(SensorHeightPage2),
+    new PropertyMetadata(new ObservableCollection<Points>()));
 
 
+        // 객체가 아니라 간단하게 하나만 Binding할떄는 이 코드 사용!
+        public double myPointLx
+        {
+            get { return (double)GetValue(myPointLxProperty); }
+            set { SetValue(myPointLxProperty, value); }
+        }
+
+        public static readonly DependencyProperty myPointLxProperty =
+    DependencyProperty.Register("myPointLx", typeof(double), typeof(SensorHeightPage2), new PropertyMetadata(null));
+
+        public double myPointRx
+        {
+            get { return (double)GetValue(myPointRxProperty); }
+            set { SetValue(myPointRxProperty, value); }
+        }
+
+        public static readonly DependencyProperty myPointRxProperty =
+    DependencyProperty.Register("myPointRx", typeof(double), typeof(SensorHeightPage2), new PropertyMetadata(null));
+
+        public double myPointLy
+        {
+            get { return (double)GetValue(myPointLyProperty); }
+            set { SetValue(myPointLyProperty, value); }
+        }
+
+        public static readonly DependencyProperty myPointLyProperty =
+    DependencyProperty.Register("myPointLy", typeof(double), typeof(SensorHeightPage2), new PropertyMetadata(null));
+   
+        public double myPointRy
+        { 
+            get { return (double)GetValue(myPointRyProperty); }
+            set { SetValue(myPointRyProperty, value); }
+        }
+
+        public static readonly DependencyProperty myPointRyProperty =
+    DependencyProperty.Register("myPointRY", typeof(double), typeof(SensorHeightPage2), new PropertyMetadata(null));
+
+
+
+
+
+        #endregion
 
         // 이벤트 발생시 실행
         public void ModelUpdateHandler(object sender, EventArgs e)
@@ -96,7 +124,6 @@ namespace NewLocalBeam
             //Do something here
             // DrawLine();
             // this.KeepAlive = true;
-
             InitializeValue();
             DrawScreen();
             DrawSensor();
@@ -108,10 +135,6 @@ namespace NewLocalBeam
             FindSensorPosition("right");
             //   DrawArc(sensorLPoint, 50, 0, 45);
             //  DrawArc(sensorLPoint, 30, 45, 60);
-
-
-
-
 
             /* 객체로 저장함 */
             Points temp = new Points();
@@ -125,12 +148,37 @@ namespace NewLocalBeam
             Model.points = temp;
 
             DrawInfo();
-  
-
 
             //  MeasureAllAngles("right");
             //  FindSensorPosition("right");
         }
+
+        // http://stackoverflow.com/questions/1481130/wpf-binding-to-local-variable 
+        // 바인딩 하는법
+        public void MakePointsBinding()
+        {
+            PointList = new ObservableCollection<Points>();
+            points = new Points();
+            points.P1_x = 100;
+            points.P1_y = 100;
+            points.P2_x = 200;
+            points.P3_x = 400;
+
+            //  InitializeValue();
+
+            PointList.Add(points);
+            points.ModelUpdateHappened += ModelUpdateHandler;
+        }
+
+        Line myLine1;
+        Line myLine2;
+        Line myLine3;
+        Label lblP1;
+        Label lblP2;
+        Label lblP3;
+        Label lblSensorLeft;
+        Label lblSensorRight;
+
 
         public void DrawInfo()
         {
@@ -141,152 +189,76 @@ namespace NewLocalBeam
             */
 
             // 왼쪽센서 - p1 선 긋기
-            Line myLine = new Line();
-            myLine.X1 = sensorLPoint.X + sensorBorder/2; myLine.Y1 = sensorLPoint.Y + sensorBorder/2;
-            myLine.X2 = Model.p1_x + sensorBorder/2 ; myLine.Y2 = Model.p1_y + sensorBorder/2;
-            myLine.Stroke = new SolidColorBrush(Colors.Black);
-            canvas.Children.Add(myLine);
+            myLine1 = new Line();
+            myLine1.X1 = myPointLx + sensorBorder/2; myLine1.Y1 = myPointLy + sensorBorder/2;
+            myLine1.X2 = PointList[0].P1_x + sensorBorder/2 ; myLine1.Y2 = PointList[0].P1_y + sensorBorder/2;
+            myLine1.Stroke = new SolidColorBrush(Colors.Black);
+            canvas.Children.Add(myLine1);
 
             // 왼쪽센서 - p2 선 긋기
-            myLine = new Line();
-            myLine.X1 = sensorLPoint.X + sensorBorder / 2; myLine.Y1 = sensorLPoint.Y + sensorBorder / 2;
-            myLine.X2 = Model.p2_x + sensorBorder / 2; myLine.Y2 = Model.p2_y + sensorBorder / 2;
-            myLine.Stroke = new SolidColorBrush(Colors.Black);
-            canvas.Children.Add(myLine);
+            myLine2 = new Line();
+            myLine2.X1 = myPointLx + sensorBorder / 2; myLine2.Y1 = myPointLy + sensorBorder / 2;
+            myLine2.X2 = PointList[0].P2_x + sensorBorder / 2; myLine2.Y2 = PointList[0].P1_y + sensorBorder / 2;
+            myLine2.Stroke = new SolidColorBrush(Colors.Black);
+            canvas.Children.Add(myLine2);
 
             // 왼쪽센서 - p3 선 긋기
-            myLine = new Line();
-            myLine.X1 = sensorLPoint.X + sensorBorder / 2; myLine.Y1 = sensorLPoint.Y + sensorBorder / 2;
-            myLine.X2 = Model.p3_x + sensorBorder / 2; myLine.Y2 = Model.p3_y + sensorBorder / 2;
-            myLine.Stroke = new SolidColorBrush(Colors.Black);
-            canvas.Children.Add(myLine);
-
+            myLine3 = new Line();
+            myLine3.X1 = myPointLx + sensorBorder / 2; myLine3.Y1 = myPointLy + sensorBorder / 2;
+            myLine3.X2 = PointList[0].P3_x + sensorBorder / 2; myLine3.Y2 = PointList[0].P1_y + sensorBorder / 2;
+            myLine3.Stroke = new SolidColorBrush(Colors.Black);
+            canvas.Children.Add(myLine3);
 
             // 좌표 위치 표시하기
-            Label lblP1 = new Label();
-            Canvas.SetLeft(lblP1, Model.p1_x);
-            Canvas.SetTop(lblP1, Model.p1_y + 5);
-            lblP1.Content = "(" + Model.p1_x + ", " + Model.p1_y + ")";
+            lblP1 = new Label();
+            Canvas.SetLeft(lblP1, PointList[0].P1_x);
+            Canvas.SetTop(lblP1, PointList[0].P1_y + 5);
+            lblP1.Content = "P1 (" + PointList[0].P1_x  + ", " + PointList[0].P1_y + ")";
             canvas.Children.Add(lblP1);
 
-            Label lblP2 = new Label();
-            Canvas.SetLeft(lblP2, Model.p2_x);
-            Canvas.SetTop(lblP2, Model.p2_y + 5);
-            lblP2.Content = "(" + Model.p2_x + ", " + Model.p2_y + ")";
+            lblP2 = new Label();
+            Canvas.SetLeft(lblP2, PointList[0].P2_x);
+            Canvas.SetTop(lblP2, PointList[0].P1_y + 5);
+            lblP2.Content = "P2 (" + PointList[0].P2_x + ", " + PointList[0].P1_y + ")";
             canvas.Children.Add(lblP2);
 
-            Label lblP3 = new Label();
-            Canvas.SetLeft(lblP3, Model.p3_x);
-            Canvas.SetTop(lblP3, Model.p3_y + 5);
-            lblP3.Content = "(" + Model.p3_x + ", " + Model.p3_y + ")";
+            lblP3 = new Label();
+            Canvas.SetLeft(lblP3, PointList[0].P3_x);
+            Canvas.SetTop(lblP3, PointList[0].P1_y + 5);
+            lblP3.Content = "P3 (" + PointList[0].P3_x + ", " + PointList[0].P1_y + ")";
             canvas.Children.Add(lblP3);
 
-            Label lblSensorLeft = new Label();
-            Canvas.SetLeft(lblSensorLeft, sensorLPoint.X + 20);
-            Canvas.SetTop(lblSensorLeft, sensorLPoint.Y);
-            lblSensorLeft.Content = "(" + sensorLPoint.X+ ", " + sensorLPoint.Y + ")";
+            lblSensorLeft = new Label();
+            Canvas.SetLeft(lblSensorLeft, myPointLx);
+            Canvas.SetTop(lblSensorLeft, myPointLy + 5);
+            lblSensorLeft.Content = "SensorLeft (" + myPointLx + ", " + myPointLy + ")";
             lblSensorLeft.Foreground = new SolidColorBrush(Colors.DarkRed);
             canvas.Children.Add(lblSensorLeft);
 
+            lblSensorRight= new Label();
+            Canvas.SetLeft(lblSensorRight, myPointRx);
+            Canvas.SetTop(lblSensorRight, myPointRy + 5);
+            lblSensorRight.Content = "SensorRight (" + myPointRx + ", " + myPointRy + ")";
+            lblSensorRight.Foreground = new SolidColorBrush(Colors.DarkRed);
+            canvas.Children.Add(lblSensorRight);
+
             // 각도 표시하기
-            Label lblThetaR = new Label();
-            Canvas.SetLeft(lblThetaR, (sensorLPoint.X + Model.p1_x) * 2 / 3);
-            Canvas.SetTop(lblThetaR, sensorLPoint.Y + 10);
-            lblThetaR.Content = Math.Round(RadianToDegree(leftDevice_thetaR), 3) + "°";
-            lblThetaR.Foreground = new SolidColorBrush(Colors.DarkRed);
-            canvas.Children.Add(lblThetaR);
+            //Label lblThetaR = new Label();
+            //Canvas.SetLeft(lblThetaR, (sensorLPoint.X + Model.p1_x) * 2 / 3);
+            //Canvas.SetTop(lblThetaR, sensorLPoint.Y + 10);
+            //lblThetaR.Content = Math.Round(RadianToDegree(leftDevice_thetaR), 3) + "°";
+            //lblThetaR.Foreground = new SolidColorBrush(Colors.DarkRed);
+            //canvas.Children.Add(lblThetaR);
 
 
-            Label lblThetaL = new Label();
-            Canvas.SetLeft(lblThetaL, (sensorLPoint.X + Model.p3_x) * 1 / 2);
-            Canvas.SetTop(lblThetaL, sensorLPoint.Y + 10);
-            lblThetaL.Content = Math.Round(RadianToDegree(leftDevice_thetaL), 3) + "°";
-            lblThetaL.Foreground = new SolidColorBrush(Colors.DarkRed);
-            canvas.Children.Add(lblThetaL);
-
-
-            // Set MyProperty1 and 2
-            //this.MyProperty1 = "Hello Hello Hello";
-            //this.MyProperty2 = "World";
-
-            //this.p1_x = Convert.ToString(Model.p1_x);
-            //this.p2_x = Convert.ToString(Model.p2_x);
-            //this.p3_x = Convert.ToString(Model.p3_x);
-            //this.p1_y = Convert.ToString(Model.p1_y + 5);
-            //this.p2_y = Convert.ToString(Model.p2_y + 5);
-            //this.p3_y = Convert.ToString(Model.p3_y + 5);
-            //this.p1_string = "(" + Model.p1_x + " " + Model.p1_y + ")";
-            //this.p2_string = "(" + Model.p2_x + " " + Model.p2_y + ")";
-            //this.p3_string = "(" + Model.p3_x + " " + Model.p3_y + ")";
+            //Label lblThetaL = new Label();
+            //Canvas.SetLeft(lblThetaL, (sensorLPoint.X + Model.p3_x) * 1 / 2);
+            //Canvas.SetTop(lblThetaL, sensorLPoint.Y + 10);
+            //lblThetaL.Content = Math.Round(RadianToDegree(leftDevice_thetaL), 3) + "°";
+            //lblThetaL.Foreground = new SolidColorBrush(Colors.DarkRed);
+            //canvas.Children.Add(lblThetaL);
 
         }
-
-
-        //public string MyProperty1
-        //{
-        //    get { return (string)GetValue(MyProperty1Property); }
-        //    set { SetCurrentValue(MyProperty1Property, value); }
-        //}
-
-        //public string MyProperty2
-        //{
-        //    get { return (string)GetValue(MyProperty2Property); }
-        //    set { SetCurrentValue(MyProperty2Property, value); }
-        //}
-
-        //public string p1_x
-        //{
-        //    get { return (string)GetValue(p1_xProperty); }
-        //    set { SetCurrentValue(p1_xProperty, value); }
-        //}
-
-        //public string p1_y
-        //{
-        //    get { return (string)GetValue(p1_yProperty); }
-        //    set { SetCurrentValue(p1_yProperty, value); }
-        //}
-
-        //public string p2_x
-        //{
-        //    get { return (string)GetValue(p2_xProperty); }
-        //    set { SetCurrentValue(p2_xProperty, value); }
-        //}
-
-        //public string p2_y
-        //{
-        //    get { return (string)GetValue(p2_yProperty); }
-        //    set { SetCurrentValue(p2_yProperty, value); }
-        //}
-
-        //public string p3_x
-        //{
-        //    get { return (string)GetValue(p3_xProperty); }
-        //    set { SetCurrentValue(p3_xProperty, value); }
-        //}
-
-        //public string p3_y
-        //{
-        //    get { return (string)GetValue(p3_yProperty); }
-        //    set { SetCurrentValue(p3_yProperty, value); }
-        //}
-
-        //public string p1_string
-        //{
-        //    get { return (string)GetValue(p1_stringProperty); }
-        //    set { SetCurrentValue(p1_stringProperty, value); }
-        //}
-
-        //public string p2_string
-        //{
-        //    get { return (string)GetValue(p2_stringProperty); }
-        //    set { SetCurrentValue(p2_stringProperty, value); }
-        //}
-
-        //public string p3_string
-        //{
-        //    get { return (string)GetValue(p3_stringProperty); }
-        //    set { SetCurrentValue(p3_stringProperty, value); }
-        //}
 
 
         /* 변수 초기화. 센서환경설정을 그림그리기 적합하게 설정함 */
@@ -300,12 +272,30 @@ namespace NewLocalBeam
             // 숫자가 지금 안맞음. 센서 위치.
             sensorLPoint = new Point();
             sensorRPoint = new Point();
-
             sensorLx = ((screenWidth + deviceLength) / 2);
             sensorRx = ((screenWidth - deviceLength) / 2);
 
             sensorLPoint.X = sensorLx; sensorLPoint.Y = 0;
             sensorRPoint.X = sensorRx; sensorRPoint.Y = 0;
+
+            // Databinding
+            myPointLx = sensorLPoint.X;
+            myPointRx = sensorRPoint.X;
+            myPointLy = sensorLPoint.Y;
+            myPointRy = sensorRPoint.Y;
+
+            // 그림판에서 장치들 제거함.
+            canvas.Children.Remove(screen);
+            canvas.Children.Remove(sensorL);
+            canvas.Children.Remove(sensorR);
+            canvas.Children.Remove(myLine1);
+            canvas.Children.Remove(myLine2);
+            canvas.Children.Remove(myLine3);
+            canvas.Children.Remove(lblP1);
+            canvas.Children.Remove(lblP2);
+            canvas.Children.Remove(lblP3);
+            canvas.Children.Remove(lblSensorLeft);
+            canvas.Children.Remove(lblSensorRight);
         }
 
 
@@ -414,7 +404,6 @@ namespace NewLocalBeam
 
                 txt_LDsensorX.Text = Convert.ToString(sensorLPoint.X);
                 txt_LDsensorY.Text = Convert.ToString(sensorLPoint.Y);
-
             }
         }
 
@@ -442,6 +431,8 @@ namespace NewLocalBeam
                 txt_RDx.Text = Convert.ToString(x + p[1].X); // x값 출력
                 txt_RDy.Text = Convert.ToString(y);
 
+                txtB_RFinal.Text = "(" + txt_LDx.Text + " , " + Math.Round(p[0].Y - y, 4) + ")";
+
             }
             else if (direction == "left")
             {
@@ -465,6 +456,7 @@ namespace NewLocalBeam
                 txt_LDx.Text = Convert.ToString(x + p[1].X); // x값 출력
                 txt_LDy.Text = Convert.ToString(y);
 
+                txtB_LFinal.Text = "(" + txt_LDx.Text + " , " + Math.Round(p[0].Y - y, 4) + ")";
 
                 // leftDevice_thetaR + leftDevice_thetaM < Math.PI / 2 && leftDevice_thetaR + leftDevice_thetaM > 0
                 if (leftDevice_thetaR1 + leftDevice_thetaM + leftDevice_thetaR < Math.PI / 2 + 0.01 && leftDevice_thetaR1 + leftDevice_thetaM + leftDevice_thetaR > Math.PI / 2 - 0.01)
@@ -482,39 +474,12 @@ namespace NewLocalBeam
 
         }
 
-        /* 각도보정 */
-        // 여기서부터 하면 됨!!!
-        //public void CalibrateAngle()
-        //{
-        //    double calL = Math.Atan2(Model.h, (Model.X + Model.d) / 2);
-        //    double calR = Math.Atan2(Model.h, (Model.X - Model.d) / 2);
-        //    this.setThetaL(this.getThetaL(true) + calL, true);
-        //    this.setThetaR(this.getThetaR(true) + calR, true);
-        //}
-
-        //public double getThetaL(bool isRadian = false)
-        //{
-        //    return isRadian ? thetaL : (thetaL * 180) / Math.PI;
-        //}
-        //public void setThetaL(double theta, bool isRadian = false)
-        //{
-        //    this.thetaL = isRadian ? theta : (theta * Math.PI) / 180;
-        //}
-        //public double getThetaR(bool isRadian = false)
-        //{
-        //    return isRadian ? thetaR : (thetaR * 180) / Math.PI;
-        //}
-        //public void setThetaR(double theta, bool isRadian = false)
-        //{
-        //    this.thetaR = (isRadian ? theta : (theta * Math.PI) / 180);
-        //}
-
-
+        Rectangle screen;
 
         /* 사각형(빔화면) 그림 */
         public void DrawScreen()
         {
-            Rectangle screen = new Rectangle();
+            screen = new Rectangle();
             screen.Width = screenWidth; // Model.X / ratio;
             screen.Height = screenHeight; //  Model.Y / ratio;
 
@@ -527,12 +492,15 @@ namespace NewLocalBeam
 
         public static int sensorBorder = 10;
 
+        Ellipse sensorL;
+        Ellipse sensorR;
+
         /* 센서 그림 */
         public void DrawSensor()
         {
 
             // 왼쪽센서
-            Ellipse sensorL = new Ellipse();
+            sensorL = new Ellipse();
             sensorL.Width = sensorBorder;
             sensorL.Height = sensorBorder;
 
@@ -543,7 +511,7 @@ namespace NewLocalBeam
             canvas.Children.Add(sensorL);
 
             // 오른쪽센서
-            Ellipse sensorR = new Ellipse();
+            sensorR = new Ellipse();
             sensorR.Width = sensorBorder;
             sensorR.Height = sensorBorder;
             Canvas.SetLeft(sensorR, sensorRx);
@@ -564,32 +532,20 @@ namespace NewLocalBeam
                 switch (i)
                 {
                     case 0:
-                        p[i].X = Model.p1_x;
-                        p[i].Y = Model.p1_y;
+                        p[i].X = PointList[0].P1_x;
+                        p[i].Y = PointList[0].P1_y;
                         break;
                     case 1:
-                        p[i].X = Model.p2_x;
-                        p[i].Y = Model.p2_y;
+                        p[i].X = PointList[0].P2_x;
+                        p[i].Y = PointList[0].P1_y;
                         break;
                     case 2:
-                        p[i].X = Model.p3_x;
-                        p[i].Y = Model.p3_y;
+                        p[i].X = PointList[0].P3_x;
+                        p[i].Y = PointList[0].P1_y;
                         break;
                 }
             }
 
-            // 원을 만들고 그림
-            for (int i = 0; i < 3; i++)
-            {
-                Ellipse ep = new Ellipse();
-                ep.Width = 10;
-                ep.Height = 10;
-                ep.SetCurrentValue(Canvas.LeftProperty, p[i].X);
-                ep.SetCurrentValue(Canvas.TopProperty, p[i].Y);
-                ep.Fill = Brushes.Black;
-
-                canvas.Children.Add(ep);
-            }
         }
 
         public void DrawLine()
@@ -608,8 +564,7 @@ namespace NewLocalBeam
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
-            canvas.Children.Clear();
-         //   this.NavigationService.Navigate(Model.sensorHeightMainPage);
+            // canvas.Children.Clear();
             this.NavigationService.GoBack();
 
         }
@@ -627,15 +582,13 @@ namespace NewLocalBeam
         // Drang And Drop
         void onDragDelta(object sender, DragDeltaEventArgs e)
         {
-            Canvas.SetLeft(myThumb, Canvas.GetLeft(myThumb) + e.HorizontalChange);
-            Canvas.SetTop(myThumb, Canvas.GetTop(myThumb) + e.VerticalChange);
+            // Canvas.SetLeft(myThumb, Canvas.GetLeft(myThumb) + e.HorizontalChange);
+           //  Canvas.SetTop(myThumb, Canvas.GetTop(myThumb) + e.VerticalChange);
         }
 
     }
 
 }
-
-
 
 
 // 안됨..

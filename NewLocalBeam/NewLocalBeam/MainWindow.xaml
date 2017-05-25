@@ -11,7 +11,9 @@
         WindowStyle="None"
         ShowTitleBar="False" IgnoreTaskbarOnMaximize="True"
         >
-    <Grid Background="{DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}"> <!-- SystemColors.InfoBrushKey -->
+    <Grid Background="#FFB9B9CD">
+        <!-- SystemColors.InfoBrushKey -->
+        <!-- DynamicResource {x:Static SystemColors.GradientActiveCaptionBrushKey}}s-->
         <Frame x:Name="myFrame" Content="" NavigationUIVisibility="Hidden"/>
 
     </Grid>
